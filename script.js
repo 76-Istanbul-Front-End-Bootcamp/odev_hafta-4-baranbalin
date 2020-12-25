@@ -1,7 +1,8 @@
 const data = {
-  USD: {EUR: 0.82, GBP: 0.74},
-  EUR: {USD: 1.23, GBP: 0.91},
-  GBP: {USD: 1.35, EUR: 1.10},
+  USD: {EUR: 0.82, GBP: 0.74, TRY:7.58},
+  EUR: {USD: 1.23, GBP: 0.91, TRY: 9.25},
+  GBP: {USD: 1.35, EUR: 1.10, TRY: 10.30},
+  TRY: {USD: 0.13, EUR: 0.11, GBP: 0.097}
 };
 
 const currencyKeys = Object.keys(data);
@@ -36,19 +37,36 @@ const toInputName = "currency_to";
 createCurrencyElements(currencyKeys, parentToEl, toInputName);
 
 
-const calculateButton = document.querySelector("#calculate-button");
-calculateButton.addEventListener("click", function(){
+function toast(message) {
+  var x = document.getElementById("snackbar");
+  x.innerHTML = message
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+  const calculateButton = document.querySelector("#calculate-button");
+  calculateButton.addEventListener("click", function(){
+
+  const currencyResult = document.querySelector("#currency-result");
+  
+  currencyResult.innerHTML=''
+
    // kimden ceviriyourz
-   const fromTarget = document.querySelector("input[name='currency_from']:checked").value;
+   const fromTarget = document.querySelector("input[name='currency_from']:checked");
    // kime ceviriyoruz
-   const toTarget   = document.querySelector("input[name='currency_to']:checked").value;
+   const toTarget   = document.querySelector("input[name='currency_to']:checked");
    // amountu alalim
-   const amount     = document.querySelector("input[name='amount']").value;
+   const amount     = document.querySelector("input[name='amount']");
 
-   const currentCurrencyObject = data[fromTarget];
-   const resultForOne = currentCurrencyObject[toTarget];
-   const result = amount * resultForOne;
 
-   const currencyResult = document.querySelector("#currency-result");
-   currencyResult.innerHTML = amount + " " + fromTarget + " = " + result + " " + toTarget;
+  if (!fromTarget) return toast(`! İlk para birimini seçiniz !`)
+  if (!toTarget) return toast(`! İkinci para birimini seçiniz !`)
+  if (fromTarget.value === toTarget.value) return toast(`! Farklı seçimler yapmalısınız !`)
+
+  if (!amount || !parseInt(amount.value) || parseInt(amount.value) != amount.value) return toast(`! Sayısal bir değer giriniz !`)
+
+   const currentCurrencyObject = data[fromTarget.value];
+   const resultForOne = currentCurrencyObject[toTarget.value];
+   const result = amount.value * resultForOne;
+
+   currencyResult.innerHTML = amount.value + " " + fromTarget.value + " = " + result + " " + toTarget.value;
 });
